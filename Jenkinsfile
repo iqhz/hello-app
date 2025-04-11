@@ -3,8 +3,8 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "iqhz/hello-app"
-        REGISTRY_CREDENTIALS = 'dockerhub-credentials'      // Username & password Docker Hub
-        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'          // Kubeconfig file (disimpan di Jenkins)
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials'   // Jenkins credentials ID
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'       // Opsional kalau pakai credentials
     }
 
     stages {
@@ -34,7 +34,7 @@ pipeline {
             }
         }
 
-        stage('Push Docker Image') {
+        stage('Push Image') {
             steps {
                 sh 'docker push $DOCKER_IMAGE:latest'
             }
@@ -42,19 +42,23 @@ pipeline {
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
-                    sh 'kubectl --kubeconfig=$KUBECONFIG apply -f k8s/'
-                }
+                // Jika kubeconfig disimpan di Jenkins credentials:
+                // withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
+                //     sh 'kubectl --kubeconfig=$KUBECONFIG apply -f k8s/'
+                // }
+
+                // Kalau kubeconfig sudah tersedia di ~/.kube/config:
+                sh 'kubectl apply -f k8s/'
             }
         }
     }
 
     post {
         success {
-            echo '✅ Build, push, and deploy completed successfully!'
+            echo '✅ Deployment success!'
         }
         failure {
-            echo '❌ Build failed. Please check the logs.'
+            echo '❌ Something went wrong...'
         }
     }
 }

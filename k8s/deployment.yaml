@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: hello-app
-        image: iqhz/hello-app:latest
+        image: iqhz/hello-app:${GIT_COMMIT}  # Menggunakan commit ID dari Jenkins pipeline
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

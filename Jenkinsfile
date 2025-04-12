@@ -3,20 +3,23 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "iqhz/hello-app"
-        REGISTRY_CREDENTIALS = 'dockerhub-credentials'
-        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials'   // Ganti dengan ID credentials Docker Hub kamu
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'       // ID credentials untuk kubeconfig
     }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                // Tidak perlu manual git checkout lagi jika pakai multibranch atau pipeline dari SCM
+                git 'git@github.com:iqhz/hello-app.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE:latest .'
+                script {
+                    sh 'docker build -t $DOCKER_IMAGE:latest .'
+                }
             }
         }
 
@@ -41,7 +44,14 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
-                    sh 'kubectl --kubeconfig=$KUBECONFIG apply -f k8s/'
+                    // Tambahkan logging untuk troubleshooting
+                    sh 'kubectl --kubeconfig=$KUBECONFIG version'
+                    sh 'kubectl --kubeconfig=$KUBECONFIG config get-contexts'
+                    
+                    // Apply semua file .yaml di folder k8s
+                    dir('k8s') {
+                        sh 'kubectl --kubeconfig=$KUBECONFIG apply -f .'
+                    }
                 }
             }
         }

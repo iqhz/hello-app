@@ -6,7 +6,7 @@ import (
 )
 
 func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello from Go App on Kubernetes!")
+	fmt.Fprintf(w, "Hello from Go App on Kubernetes Clustes RKE2!")
 }
 
 func main() {

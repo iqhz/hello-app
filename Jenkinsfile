@@ -44,8 +44,10 @@ pipeline {
             steps {
                 withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
                     // Debug kubectl config path
-                    sh 'echo $KUBECONFIG'
-                    sh 'ls -l $KUBECONFIG'
+                    echo "Kubeconfig path: $KUBECONFIG"
+
+                    // Make sure the file is correctly handled by Jenkins
+                    sh "cat $KUBECONFIG"  // Print kubeconfig for verification
                     
                     // Use kubectl with correct kubeconfig path
                     sh 'kubectl --kubeconfig=$KUBECONFIG version'

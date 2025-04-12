@@ -43,11 +43,15 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 withCredentials([file(credentialsId: env.KUBECONFIG_CREDENTIALS, variable: 'KUBECONFIG')]) {
-                    // Tambahkan logging untuk troubleshooting
+                    // Debug kubectl config path
+                    sh 'echo $KUBECONFIG'
+                    sh 'ls -l $KUBECONFIG'
+                    
+                    // Use kubectl with correct kubeconfig path
                     sh 'kubectl --kubeconfig=$KUBECONFIG version'
                     sh 'kubectl --kubeconfig=$KUBECONFIG config get-contexts'
-                    
-                    // Apply semua file .yaml di folder k8s
+
+                    // Apply all YAML files in k8s directory
                     dir('k8s') {
                         sh 'kubectl --kubeconfig=$KUBECONFIG apply -f .'
                     }

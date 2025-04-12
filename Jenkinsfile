@@ -3,22 +3,20 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "iqhz/hello-app"
-        REGISTRY_CREDENTIALS = 'dockerhub-credentials'   // Ganti dengan ID credentials Docker Hub kamu
-        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'       // ID credentials untuk kubeconfig
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git 'git@github.com:iqhz/hello-app.git'
+                checkout scm
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh 'docker build -t $DOCKER_IMAGE:latest .'
-                }
+                sh 'docker build -t $DOCKER_IMAGE:latest .'
             }
         }
 

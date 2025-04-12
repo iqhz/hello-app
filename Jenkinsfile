@@ -10,8 +10,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Tidak perlu manual git checkout lagi jika pakai multibranch atau pipeline dari SCM
-                git 'git@github.com:iqhz/hello-app.git'
+                checkout scm
             }
         }
 

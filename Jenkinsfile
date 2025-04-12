@@ -3,17 +3,11 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "iqhz/hello-app"
-        REGISTRY_CREDENTIALS = 'dockerhub-credentials'   // Jenkins credentials ID
-        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'       // Opsional kalau pakai credentials
+        REGISTRY_CREDENTIALS = 'dockerhub-credentials'
+        KUBECONFIG_CREDENTIALS = 'kubeconfig-rke2'
     }
 
     stages {
-        stage('Checkout') {
-            steps {
-                git 'git@github.com:iqhz/hello-app.git'
-            }
-        }
-
         stage('Build Docker Image') {
             steps {
                 script {
